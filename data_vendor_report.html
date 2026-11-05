@@ -1,0 +1,542 @@
+<title>US Market Data Under €50</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#F4F6F4;
+    --surface:#FFFFFF;
+    --surface-2:#EDF0EE;
+    --ink:#12211E;
+    --ink-2:#3A4A46;
+    --muted:#687974;
+    --rule:#D6DCD9;
+    --rule-strong:#B6C0BC;
+    --accent:#0E6E5C;
+    --accent-soft:#DDEDE8;
+    --warn:#8F5A12;
+    --warn-soft:#F3E8D5;
+    --stop:#9A3B2E;
+    --stop-soft:#F5E2DE;
+    --shadow:0 1px 2px rgba(18,33,30,.06), 0 8px 24px -16px rgba(18,33,30,.22);
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0D1614;
+      --surface:#141F1C;
+      --surface-2:#1B2724;
+      --ink:#E4EBE8;
+      --ink-2:#B6C4C0;
+      --muted:#859893;
+      --rule:#28352F;
+      --rule-strong:#3B4B45;
+      --accent:#5BC2A8;
+      --accent-soft:#12332C;
+      --warn:#D6A45C;
+      --warn-soft:#33270F;
+      --stop:#E0836F;
+      --stop-soft:#361B15;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0D1614;
+    --surface:#141F1C;
+    --surface-2:#1B2724;
+    --ink:#E4EBE8;
+    --ink-2:#B6C4C0;
+    --muted:#859893;
+    --rule:#28352F;
+    --rule-strong:#3B4B45;
+    --accent:#5BC2A8;
+    --accent-soft:#12332C;
+    --warn:#D6A45C;
+    --warn-soft:#33270F;
+    --stop:#E0836F;
+    --stop-soft:#361B15;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+    color-scheme:dark;
+  }
+
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Public Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px 96px;}
+  .prose{max-width:66ch;}
+
+  h1,h2,h3{font-family:"Fraunces","Iowan Old Style",Georgia,serif;text-wrap:balance;margin:0;line-height:1.15;}
+  h1{font-size:clamp(2.2rem,5.2vw,3.4rem);font-weight:600;letter-spacing:-.015em;}
+  h2{font-size:clamp(1.5rem,3vw,2rem);font-weight:600;letter-spacing:-.01em;}
+  h3{font-size:1.12rem;font-weight:600;}
+  p{margin:0;}
+  a{color:var(--accent);text-underline-offset:2px;}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px;}
+
+  .eyebrow{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+  }
+  .mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums;}
+
+  /* ---- masthead ---- */
+  header.masthead{border-bottom:1px solid var(--rule-strong);padding:56px 0 28px;margin-bottom:44px;}
+  .masthead .stack{display:flex;flex-direction:column;gap:18px;}
+  .lede{font-size:1.12rem;color:var(--ink-2);max-width:62ch;}
+  .brief{
+    display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--rule);background:var(--surface);
+    margin-top:8px;
+  }
+  .brief div{padding:12px 18px;flex:1 1 168px;border-right:1px solid var(--rule);}
+  .brief div:last-child{border-right:0;}
+  .brief dt{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+  .brief dd{margin:0;font-size:.94rem;font-weight:500;}
+
+  section{margin-bottom:64px;}
+  .sec-head{display:flex;flex-direction:column;gap:10px;margin-bottom:26px;padding-top:8px;border-top:2px solid var(--ink);}
+  .sec-head .eyebrow{margin-top:4px;}
+
+  /* ---- verdict ---- */
+  .verdict{
+    background:var(--accent-soft);border-left:3px solid var(--accent);
+    padding:22px 26px;display:flex;flex-direction:column;gap:12px;
+  }
+  .verdict h3{font-family:"Public Sans",sans-serif;font-size:1.05rem;}
+  .verdict p{color:var(--ink-2);max-width:64ch;}
+
+  /* ---- stacks ---- */
+  .stacks{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;align-items:start;}
+  .stack-card{
+    background:var(--surface);border:1px solid var(--rule);padding:22px;
+    display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow);
+  }
+  .stack-card.pick{border-color:var(--accent);border-width:1px;box-shadow:0 0 0 2px var(--accent-soft),var(--shadow);}
+  .stack-top{display:flex;flex-direction:column;gap:6px;}
+  .pill{
+    display:inline-block;align-self:flex-start;font-family:"IBM Plex Mono",monospace;
+    font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;
+    background:var(--accent);color:var(--paper);
+  }
+  .pill.alt{background:var(--surface-2);color:var(--muted);}
+  .price{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;font-size:1.9rem;font-weight:600;letter-spacing:-.02em;}
+  .price small{font-size:.8rem;font-weight:400;color:var(--muted);letter-spacing:0;}
+  .parts{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:7px;font-size:.9rem;}
+  .parts li{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dotted var(--rule);padding-bottom:6px;color:var(--ink-2);}
+  .parts li span:last-child{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .note{font-size:.88rem;color:var(--muted);}
+  .note strong{color:var(--ink-2);font-weight:600;}
+
+  /* ---- budget bars ---- */
+  .budget{background:var(--surface);border:1px solid var(--rule);padding:24px;margin-top:24px;}
+  .bars{display:flex;flex-direction:column;gap:16px;margin-top:18px;}
+  .bar-row{display:grid;grid-template-columns:120px 1fr 74px;gap:14px;align-items:center;font-size:.88rem;}
+  .track{position:relative;height:18px;background:var(--surface-2);}
+  .fill{position:absolute;inset:0 auto 0 0;background:var(--accent);}
+  .fill.over{background:var(--stop);}
+  .limit{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--ink);}
+  .bar-row .val{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;text-align:right;}
+  .legend{margin-top:16px;font-size:.82rem;color:var(--muted);display:flex;gap:18px;flex-wrap:wrap;}
+
+  /* ---- tables ---- */
+  .scroller{overflow-x:auto;border:1px solid var(--rule);background:var(--surface);}
+  table{border-collapse:collapse;width:100%;min-width:840px;font-size:.87rem;}
+  thead th{
+    text-align:left;font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--muted);font-weight:500;padding:12px 14px;
+    border-bottom:1px solid var(--rule-strong);white-space:nowrap;background:var(--surface);
+    position:sticky;top:0;
+  }
+  tbody td{padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2);}
+  tbody tr:last-child td{border-bottom:0;}
+  tbody th{text-align:left;padding:11px 14px;border-bottom:1px solid var(--rule);font-weight:600;color:var(--ink);white-space:nowrap;}
+  tbody tr:last-child th{border-bottom:0;}
+  td.num{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink);}
+  .tag{display:inline-block;font-size:.72rem;padding:2px 7px;font-family:"IBM Plex Mono",monospace;white-space:nowrap;}
+  .tag.y{background:var(--accent-soft);color:var(--accent);}
+  .tag.p{background:var(--warn-soft);color:var(--warn);}
+  .tag.n{background:var(--stop-soft);color:var(--stop);}
+  caption{caption-side:bottom;text-align:left;padding:12px 14px;font-size:.8rem;color:var(--muted);}
+
+  /* ---- free sources ---- */
+  .free-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0;border:1px solid var(--rule);background:var(--surface);}
+  .free-item{padding:22px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);display:flex;flex-direction:column;gap:9px;}
+  .free-item h3{font-family:"Public Sans",sans-serif;font-size:1rem;}
+  .free-item p{font-size:.89rem;color:var(--ink-2);}
+  .free-item code{font-family:"IBM Plex Mono",monospace;font-size:.78rem;background:var(--surface-2);padding:2px 5px;word-break:break-all;color:var(--ink);}
+
+  /* ---- steps ---- */
+  ol.steps{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0;counter-reset:s;}
+  ol.steps li{
+    counter-increment:s;display:grid;grid-template-columns:44px 1fr;gap:18px;
+    padding:20px 0;border-bottom:1px solid var(--rule);
+  }
+  ol.steps li:last-child{border-bottom:0;}
+  ol.steps li::before{
+    content:counter(s,decimal-leading-zero);font-family:"IBM Plex Mono",monospace;
+    font-size:.82rem;color:var(--accent);padding-top:3px;
+  }
+  ol.steps h3{margin-bottom:5px;font-family:"Public Sans",sans-serif;font-size:1rem;}
+  ol.steps p{font-size:.92rem;color:var(--ink-2);max-width:64ch;}
+
+  /* ---- risk list ---- */
+  .risks{display:flex;flex-direction:column;gap:2px;}
+  .risk{display:grid;grid-template-columns:150px 1fr;gap:20px;padding:16px 0;border-bottom:1px solid var(--rule);}
+  .risk:last-child{border-bottom:0;}
+  .risk dt{font-weight:600;font-size:.92rem;}
+  .risk dd{margin:0;font-size:.92rem;color:var(--ink-2);max-width:66ch;}
+
+  footer{border-top:1px solid var(--rule-strong);padding-top:22px;font-size:.84rem;color:var(--muted);}
+  footer ul{margin:12px 0 0;padding-left:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:4px 24px;}
+
+  @media (max-width:640px){
+    .risk{grid-template-columns:1fr;gap:4px;}
+    .bar-row{grid-template-columns:88px 1fr 62px;}
+    .free-item{border-right:0;}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+</style>
+
+<div class="wrap">
+
+<header class="masthead">
+  <div class="stack">
+    <div class="eyebrow">Vendor research · September 2026</div>
+    <h1>Buying US market data for a €50 screener</h1>
+    <p class="lede">Eleven vendors priced and compared for one job: a self-hosted NYSE/NASDAQ equity screener with weekly rebalancing, fundamentals, and — ideally — option chains, running on a personal budget.</p>
+    <dl class="brief">
+      <div><dt>Budget</dt><dd>≤ €50 / month</dd></div>
+      <div><dt>Universe</dt><dd>US equities, NYSE + NASDAQ</dd></div>
+      <div><dt>Cadence</dt><dd>Weekly reallocation</dd></div>
+      <div><dt>Stated volume</dt><dd>20k+ requests / month</dd></div>
+      <div><dt>Use class</dt><dd>Personal, non-display</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section>
+  <div class="verdict">
+    <div class="eyebrow">Headline finding</div>
+    <h3>Your 20,000 requests/month is not the constraint you think it is — and per-ticker loops are what will actually burn you.</h3>
+    <p>Every paid plan below clears 20k/month by one to three orders of magnitude. EODHD gives 100,000 calls <em>per day</em>; Massive, FMP and Twelve Data lift the daily cap entirely. The number only bites on free tiers (Alpha Vantage's 25/day ≈ 750/month is the extreme case).</p>
+    <p>What actually decides the build is three things the request count never surfaces: <strong>how far back the history goes</strong>, <strong>whether fundamentals are point-in-time or restated</strong>, and <strong>whether delisted companies are in the file</strong>. A weekly-rebalanced screener backtested on a survivor-only universe with restated financials will look brilliant and lose money.</p>
+    <p>Also: fetch bulk. A naive loop over ~3,000 US tickers once a week is ~12,000 requests/month for prices alone. The same data via a <span class="mono">bulk-EOD</span> or flat-file endpoint is roughly 20 requests/month. That difference is what lets a €27 plan do the job of a €200 one.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <div class="eyebrow">Recommendation</div>
+    <h2>Three buildable stacks</h2>
+  </div>
+  <p class="prose" style="margin-bottom:26px;color:var(--ink-2)">All three fit the brief. They differ in what they sacrifice. Dollar prices converted at roughly <span class="mono">$1 ≈ €0.92</span> — worth re-checking at signup, since your budget is tight enough that FX moves matter.</p>
+
+  <div class="stacks">
+
+    <div class="stack-card pick">
+      <div class="stack-top">
+        <span class="pill">Recommended</span>
+        <h3>A · Backtest-grade core</h3>
+        <div class="price">≈ €27<small> / mo</small></div>
+      </div>
+      <ul class="parts">
+        <li><span>Sharadar Bundle (direct)</span><span>$29</span></li>
+        <li><span>SEC EDGAR XBRL API</span><span>free</span></li>
+        <li><span>Cboe delayed chains</span><span>free</span></li>
+      </ul>
+      <p class="note"><strong>Buys you:</strong> point-in-time fundamentals plus EOD prices for ~19,500 US tickers <em>including 10,000+ delisted</em>, back to the 1990s, 90+ precomputed indicators, delivered by REST or as bulk tables you can drop straight into SQLite or Postgres. Insider and institutional holdings included.</p>
+        <p class="note"><strong>Sacrifices:</strong> no intraday bars, no options history — only today's delayed chain from Cboe. Leaves ~€23/month of headroom.</p>
+    </div>
+
+    <div class="stack-card">
+      <div class="stack-top">
+        <span class="pill alt">One vendor</span>
+        <h3>B · Single key, deepest history</h3>
+        <div class="price">€49.98<small> / mo</small></div>
+      </div>
+      <ul class="parts">
+        <li><span>EODHD · EOD Historical</span><span>€19.99</span></li>
+        <li><span>EODHD · US Options add-on</span><span>€29.99</span></li>
+        <li><span>SEC EDGAR (fundamentals)</span><span>free</span></li>
+      </ul>
+      <p class="note"><strong>Buys you:</strong> 30+ years of EOD with splits and dividends, 100k calls/day, plus real option chains — 6,000+ underlyings, EOD bid/ask, open interest, IV and full Greeks, two years of history, 43 fields per contract.</p>
+      <p class="note"><strong>Sacrifices:</strong> fundamentals are a separate €59.99 feed. Patching that with EDGAR XBRL is genuinely useful but is a real project — you build the normalisation layer yourself. The €29.99 options rate is a three-month promo; it reverts to €39.99, which puts you €10 over budget in month four.</p>
+    </div>
+
+    <div class="stack-card">
+      <div class="stack-top">
+        <span class="pill alt">Options-forward</span>
+        <h3>C · Massive (ex-Polygon)</h3>
+        <div class="price">≈ €43<small> / mo</small></div>
+      </div>
+      <ul class="parts">
+        <li><span>Stocks Starter</span><span>$29</span></li>
+        <li><span>Options Starter</span><span>$29</span></li>
+        <li><span>less 20% annual billing</span><span>−$11.60</span></li>
+      </ul>
+      <p class="note"><strong>Buys you:</strong> unlimited calls, minute and second aggregates, flat files, WebSockets, and full OPRA coverage of every US options ticker with real-time Greeks and IV — the best engineering of the three.</p>
+      <p class="note"><strong>Sacrifices:</strong> only 5 years of stock history and 2 of options; both feeds are 15-minute delayed. Fundamentals are not in these tiers at all — that's another $29/month for the standalone Financials &amp; Ratios product, pushing you to ~€64. Only works if you pay annually up front.</p>
+    </div>
+
+  </div>
+
+  <div class="budget">
+    <div class="eyebrow">Monthly cost against the €50 ceiling</div>
+    <div class="bars">
+      <div class="bar-row"><span>Stack A</span><div class="track"><div class="fill" style="width:40.5%"></div><div class="limit" style="left:74.6%"></div></div><span class="val">€27</span></div>
+      <div class="bar-row"><span>Stack B</span><div class="track"><div class="fill" style="width:74.6%"></div><div class="limit" style="left:74.6%"></div></div><span class="val">€50</span></div>
+      <div class="bar-row"><span>Stack B <span class="mono" style="color:var(--muted)">m4+</span></span><div class="track"><div class="fill over" style="width:89.5%"></div><div class="limit" style="left:74.6%"></div></div><span class="val">€60</span></div>
+      <div class="bar-row"><span>Stack C</span><div class="track"><div class="fill" style="width:64.2%"></div><div class="limit" style="left:74.6%"></div></div><span class="val">€43</span></div>
+      <div class="bar-row"><span>C + fundamentals</span><div class="track"><div class="fill over" style="width:95.5%"></div><div class="limit" style="left:74.6%"></div></div><span class="val">€64</span></div>
+      <div class="bar-row"><span>EODHD All-In-One</span><div class="track"><div class="fill over" style="width:100%"></div><div class="limit" style="left:74.6%"></div></div><span class="val">€100</span></div>
+    </div>
+    <div class="legend"><span>▌ vertical rule = €50 budget ceiling</span><span>scale 0 → €67 (bar length is proportional; the last bar is clipped at €100)</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <div class="eyebrow">The field</div>
+    <h2>What every vendor charges and what you get</h2>
+  </div>
+  <div class="scroller">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Vendor</th>
+          <th scope="col">Entry paid tier</th>
+          <th scope="col">Request limits</th>
+          <th scope="col">Price history</th>
+          <th scope="col">Fundamentals</th>
+          <th scope="col">Options</th>
+          <th scope="col">Fit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Sharadar<br><span class="mono" style="font-weight:400;font-size:.76rem;color:var(--muted)">direct</span></th>
+          <td class="num">$29 bundle<br><span style="color:var(--muted)">$9 prices only<br>$19 fundamentals only</span></td>
+          <td>REST + bulk table download; designed for full-table pulls, not per-ticker polling</td>
+          <td class="num">1990s →<br><span style="color:var(--muted)">incl. delisted</span></td>
+          <td><span class="tag y">point-in-time</span> 90+ indicators, 19,500 tickers, insider + institutional holdings</td>
+          <td><span class="tag n">none</span></td>
+          <td><span class="tag y">best core</span></td>
+        </tr>
+        <tr>
+          <th scope="row">EODHD</th>
+          <td class="num">€19.99 EOD<br>€29.99 +intraday<br>€59.99 fundamentals<br>€99.99 all-in-one</td>
+          <td class="num">100,000/day<br>1,000/min</td>
+          <td class="num">30+ yrs EOD<br><span style="color:var(--muted)">1-min from 2004</span></td>
+          <td><span class="tag p">separate feed</span> statements, ESG, Form 4 insiders, institutional holdings</td>
+          <td><span class="tag y">€29.99 add-on</span> 6,000 underlyings, 2 yrs, Greeks + IV, EOD only</td>
+          <td><span class="tag y">strong</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Massive<br><span class="mono" style="font-weight:400;font-size:.76rem;color:var(--muted)">ex-Polygon.io</span></th>
+          <td class="num">$29 stocks<br>$29 options<br>$29 financials</td>
+          <td>Unlimited calls from $29; free tier 5/min</td>
+          <td class="num">5 yrs @ $29<br>10 yrs @ $79<br>20+ yrs @ $199</td>
+          <td><span class="tag p">$199 tier or $29 add-on</span></td>
+          <td><span class="tag y">full OPRA</span> every US ticker, real-time Greeks + IV, 2 yrs @ $29</td>
+          <td><span class="tag y">best eng.</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Financial<br>Modeling Prep</th>
+          <td class="num">$29 starter<br>$69 premium<br>$139 ultimate</td>
+          <td class="num">300/min @ $29<br>750/min @ $69<br><span style="color:var(--muted)">+20 GB / 50 GB<br>trailing-30d cap</span></td>
+          <td class="num">5 yrs @ $29<br>30+ yrs @ $69</td>
+          <td><span class="tag y">included</span> broad and easy, but restated — not point-in-time</td>
+          <td><span class="tag p">partial</span> chains exist; tier gating is not documented publicly</td>
+          <td><span class="tag p">fast start</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Twelve Data</th>
+          <td class="num">$29 grow<br>$99 pro</td>
+          <td class="num">55 credits/min @ $29<br>610/min @ $99<br><span style="color:var(--muted)">no daily cap</span></td>
+          <td>Not published per tier</td>
+          <td><span class="tag y">from $29</span> statements, earnings, ratings</td>
+          <td><span class="tag n">$99 tier only</span></td>
+          <td><span class="tag p">ok</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Tiingo</th>
+          <td class="num">$30 power<br>$50 commercial</td>
+          <td class="num">100,000/day<br>10,000/hr · 40 GB/mo</td>
+          <td class="num">1962 → EOD</td>
+          <td><span class="tag p">paid add-on</span> deep history by request only</td>
+          <td><span class="tag n">none</span></td>
+          <td><span class="tag p">prices only</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Alpaca</th>
+          <td class="num">$0 free<br>$99 Algo Trader Plus</td>
+          <td class="num">200/min free<br>10,000/min paid</td>
+          <td>Free tier is IEX only (~2.5% of volume); full SIP needs $99</td>
+          <td><span class="tag n">none</span></td>
+          <td><span class="tag p">OPRA at $99</span></td>
+          <td><span class="tag p">broker-side</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Finnhub</th>
+          <td class="num">$0 free<br>~$50 fundamentals</td>
+          <td class="num">~60/min free</td>
+          <td>Real-time US quotes on free tier</td>
+          <td><span class="tag p">paid</span></td>
+          <td><span class="tag n">weak</span></td>
+          <td><span class="tag p">news / alt-data</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Alpha Vantage</th>
+          <td class="num">$49.99 → $249.99</td>
+          <td class="num">25/day free<br>75/min @ $49.99</td>
+          <td>20+ yrs daily</td>
+          <td><span class="tag p">included, thin</span></td>
+          <td><span class="tag p">limited</span></td>
+          <td><span class="tag n">poor value</span></td>
+        </tr>
+        <tr>
+          <th scope="row">ThetaData</th>
+          <td class="num">$40 value<br>$80 standard</td>
+          <td>Options specialist; tick trade/quote at $80</td>
+          <td class="num">4 yrs @ $40<br>8 yrs @ $80</td>
+          <td><span class="tag n">none</span></td>
+          <td><span class="tag y">deepest cheap</span> full historical OPRA tick</td>
+          <td><span class="tag p">later, if serious</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Databento</th>
+          <td class="num">$199/mo OPRA<br>+ PAYG historical</td>
+          <td>Usage-metered historical; live OPRA usage pricing retired June 2025</td>
+          <td>Institutional, full depth</td>
+          <td><span class="tag n">none</span></td>
+          <td><span class="tag y">institutional</span></td>
+          <td><span class="tag n">out of budget</span></td>
+        </tr>
+      </tbody>
+      <caption>Prices as listed publicly, September 2026, on personal/non-professional tiers. Annual billing discounts: Massive −20%, Twelve Data −17%, EODHD ≈ −17%.</caption>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <div class="eyebrow">€0</div>
+    <h2>Free sources worth wiring in permanently</h2>
+  </div>
+  <p class="prose" style="margin-bottom:22px;color:var(--ink-2)">Two of these are not fallbacks — they are primary sources that no paid vendor improves on, and they belong in the stack regardless of what you subscribe to.</p>
+  <div class="free-grid">
+    <div class="free-item">
+      <h3>SEC EDGAR XBRL APIs</h3>
+      <p>Four endpoints — <code>submissions</code>, <code>companyconcept</code>, <code>companyfacts</code>, <code>frames</code> — covering every 10-K, 10-Q, 8-K, 20-F, 40-F and 6-K. No API key, no cost, no authentication. Updated within about a minute of dissemination; bulk ZIPs rebuild nightly around 03:00 ET.</p>
+      <p class="note"><strong>Why it matters:</strong> this is the primary source your vendors resell. The <code>frames</code> endpoint returns one fact for every filer in a period — a whole-market screen in a single call. Set a descriptive User-Agent and stay under ~10 requests/second.</p>
+    </div>
+    <div class="free-item">
+      <h3>Cboe delayed option chains</h3>
+      <p>Full chain with bid/ask, open interest, IV and Greeks per contract:<br><code>cdn.cboe.com/api/global/delayed_quotes/options/TICKER.json</code></p>
+      <p class="note"><strong>Catch:</strong> a snapshot only — no history, so you must capture and store daily yourself if you want a time series. Delayed, which is irrelevant for weekly rebalancing. Undocumented and unsupported; treat as best-effort.</p>
+    </div>
+    <div class="free-item">
+      <h3>Sharadar free tier</h3>
+      <p>The complete schema — fundamentals, prices, holdings — restricted to the 30 Dow Jones constituents. Build and test your entire ingestion pipeline against it, then pay the $29 only when the code works.</p>
+    </div>
+    <div class="free-item">
+      <h3>yfinance / Yahoo</h3>
+      <p>Free, broad, and structurally unreliable: undocumented limits, 429s under parallel load, endpoints and response shapes that change without notice and break the library until it ships a fix.</p>
+      <p class="note"><strong>Verdict:</strong> fine for exploration in your notebook. Do not put it on the path of a rebalance decision.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <div class="eyebrow">Build order</div>
+    <h2>How I'd sequence this</h2>
+  </div>
+  <ol class="steps">
+    <li>
+      <div>
+        <h3>Pin the universe before buying anything</h3>
+        <p>Decide what "US stocks" means for the screener: NYSE + NASDAQ common shares, minimum price and dollar-volume floors, ADRs and REITs in or out. That count drives every limit question afterwards, and it's usually 2,000–4,000 names rather than the 11,000 tickers a vendor advertises.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Build against the free tiers first</h3>
+        <p>Sharadar's 30-company free tier plus EDGAR gives you the real schema at zero cost. Get the ingest, the point-in-time joins and the ranking logic working there. Most €50/month regret comes from subscribing before knowing which fields you actually use.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Subscribe to the core price + fundamentals feed</h3>
+        <p>Stack A at $29. Load full history once into a local store, then run nightly or weekly deltas. Never query a vendor for something already in your database — with weekly rebalancing your steady-state usage should land in the hundreds of requests per month, not tens of thousands.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Backtest before adding options</h3>
+        <p>Run the weekly rebalance over as much history as you have, on the delisted-inclusive universe, with fundamentals as-reported at the time. Options data is the expensive half of the budget and buying it before the equity strategy is validated is the classic sequencing error.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Add options only once you know what you need from them</h3>
+        <p>If it's IV rank, skew or put/call ratio as screening signals, capture Cboe's free daily snapshot and build your own history — one cron job, €0. If you need years of history immediately, EODHD's €29.99 add-on gives two years and Massive's $29 tier gives real-time Greeks. Only if you go to contract-level backtesting does ThetaData at $40–80 become worth breaking the budget for.</p>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section>
+  <div class="sec-head">
+    <div class="eyebrow">Before you sign</div>
+    <h2>Five things that bite later</h2>
+  </div>
+  <dl class="risks">
+    <div class="risk">
+      <dt>Restated vs. point-in-time</dt>
+      <dd>Most cheap fundamentals feeds return the <em>current</em> version of a company's financials. Screening 2019 with numbers restated in 2022 is lookahead bias, and it inflates backtest returns silently. Sharadar's point-in-time dimension is the single strongest reason to pick it over FMP or EODHD at the same price.</dd>
+    </div>
+    <div class="risk">
+      <dt>Survivorship bias</dt>
+      <dd>If delisted tickers aren't in the file, your backtest never buys anything that went to zero. Ask explicitly. Sharadar ships 10,000+ delisted names; several competitors quietly do not.</dd>
+    </div>
+    <div class="risk">
+      <dt>Non-professional licensing</dt>
+      <dd>Every €50-range plan here is licensed for personal, internal, non-display use. Showing the data to other people, embedding it in a product, or redistributing it moves you to business pricing — typically $99+/month per dataset. Fine for an in-house screener; check before you ever share a dashboard.</dd>
+    </div>
+    <div class="risk">
+      <dt>Delayed ≠ a problem here</dt>
+      <dd>Massive and EODHD's cheap tiers are 15-minute delayed. For weekly reallocation decided on the close, that is entirely irrelevant — don't pay the $199 real-time premium for a cadence that doesn't use it.</dd>
+    </div>
+    <div class="risk">
+      <dt>Bandwidth caps hide behind call caps</dt>
+      <dd>FMP's real limit is a trailing-30-day bandwidth ceiling (20 GB on Starter, 50 GB on Premium), not the calls-per-minute number in the pricing table. Bulk-download a full history and you can hit it in an afternoon. Tiingo's Power tier is similarly capped at 40 GB/month.</dd>
+    </div>
+  </dl>
+</section>
+
+<footer>
+  <div class="eyebrow" style="margin-bottom:6px">Sources</div>
+  <p>Vendor pricing pages and product documentation retrieved 5 September 2026. Prices change; verify before subscribing — particularly Polygon.io, which now redirects to Massive.com following a rebrand.</p>
+  <ul>
+    <li><a href="https://massive.com/pricing">Massive (ex-Polygon.io) pricing</a></li>
+    <li><a href="https://massive.com/options">Massive options plans</a></li>
+    <li><a href="https://eodhd.com/pricing">EODHD pricing</a></li>
+    <li><a href="https://eodhd.com/marketplace/unicornbay/options">EODHD US options API</a></li>
+    <li><a href="https://sharadar.com/subscribe">Sharadar subscriptions</a></li>
+    <li><a href="https://www.tiingo.com/about/pricing">Tiingo pricing</a></li>
+    <li><a href="https://twelvedata.com/pricing">Twelve Data pricing</a></li>
+    <li><a href="https://www.alphavantage.co/premium/">Alpha Vantage premium</a></li>
+    <li><a href="https://www.thetadata.net/pricing">ThetaData pricing</a></li>
+    <li><a href="https://alpaca.markets/data">Alpaca market data</a></li>
+    <li><a href="https://www.sec.gov/search-filings/edgar-application-programming-interfaces">SEC EDGAR APIs</a></li>
+    <li><a href="https://databento.com/pricing">Databento pricing</a></li>
+  </ul>
+</footer>
+
+</div>
