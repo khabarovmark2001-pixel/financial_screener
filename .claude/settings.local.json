@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:polygon.io)",
+      "WebFetch(domain:eodhd.com)",
+      "Bash(.venv/bin/python -c ' *)"
+    ]
+  }
+}
